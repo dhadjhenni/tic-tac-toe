@@ -1,45 +1,157 @@
 <!DOCTYPE html>
 <html class="noJS" lang="fr">
-    <head>
-        <meta charset="UTF-8" />
-        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-        <link rel="stylesheet" href="styles/styles.css" />
 
-        <title>Tic-Tac-Toe</title>
+<head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="stylesheet" href="styles/styles.css" />
 
-        <script>
-            const hasJS = (function () {
-                const htmlTag = document.getElementsByTagName('html')[0];
-                const htmlClass = htmlTag.className.replace('noJS', 'hasJS');
-                htmlTag.className = htmlClass;
-            })();
-        </script>
-    </head>
-    <body>
-        <!-- START : content -->
-        <div id="content">
-            <header>
-                <h1>Tic-Tac-Toe</h1>
-            </header>
-            <main>
-                <div id="gameboard"></div>
-            </main>
+    <title>Tic-Tac-Toe</title>
 
-            <footer>
-                <p>
-                    Copyright 2023 - <a href="http://www.dhh.me">dhh.me</a> /
-                    <a href="https://github.com/dhadjhenni">Github</a>
-                </p>
-            </footer>
-        </div>
-        <!-- END : content -->
+    <script>
+        const hasJS = (function () {
+            const htmlTag = document.getElementsByTagName('html')[0];
+            const htmlClass = htmlTag.className.replace('noJS', 'hasJS');
+            htmlTag.className = htmlClass;
+        })();
+    </script>
+</head>
 
-        <!-- START : scripts -->
-        <script>
-            const Gameboard = (function () {
-                console.log('Gameboard launched');
-            })();
-        </script>
-    </body>
+<body>
+    <!-- START : content -->
+    <div id="content">
+        <header>
+            <h1>Tic-Tac-Toe</h1>
+        </header>
+        <main>
+            <div id="gameboard">
+                <button data-id="0" class="field"></button>
+                <button data-id="1" class="field"></button>
+                <button data-id="2" class="field"></button>
+                <button data-id="3" class="field"></button>
+                <button data-id="4" class="field"></button>
+                <button data-id="5" class="field"></button>
+                <button data-id="6" class="field"></button>
+                <button data-id="7" class="field"></button>
+                <button data-id="8" class="field"></button>
+            </div>
+            <!--<div class="actions">
+                <button class="btn">X</button>
+                <button class="btn">O</button>
+            </div>-->
+        </main>
+
+        <footer>
+            <p>
+                Copyright 2023 - <a href="http://www.dhh.me">dhh.me</a> /
+                <a href="https://github.com/dhadjhenni">Github</a>
+            </p>
+        </footer>
+    </div>
+    <!-- END : content -->
+
+    <!-- START : scripts -->
+    <script>
+        const gameContainer = document.querySelector('#gameboard');
+        const gameButtons = document.querySelector('.btn');
+        const gameFields = document.querySelectorAll('.field');
+
+        const signX = 'X';
+        const signO = 'O';
+
+        let playerOneSign = signX;
+        let playerTwoSign = signO;
+        let sign = playerOneSign;
+        let turn = 0;
+
+
+        const gameBoard = (function () {
+
+            let _gameArray = new Array(9).fill(null);
+            let _activePlayer;
+
+            const Player = (name, sign, turn) => {
+                return { name, sign, turn }
+            };
+
+            const player1 = Player('playerOne', 'X', true);
+            const player2 = Player('playerTwo', 'O', false);
+
+            const _winSequence = [
+                [0, 1, 2],
+                [0, 3, 6],
+                [3, 4, 5],
+                [6, 7, 8],
+                [1, 4, 7],
+                [2, 4, 6],
+                [2, 5, 8],
+                [0, 4, 8],
+            ];
+
+            const endGameTie = () => {
+                console.log('Tie : fin du game');
+            };
+
+            const declareWinner = (player) => {
+                console.log(player + ' wins');
+            };
+
+            const checkWinner = (arr, player) => {
+                _winSequence.forEach((item, index) => { // [0, 1, 2, 3, 4, 5, 6, 7]
+                    if (arr[item[0]] === player.sign && arr[item[1]] === player.sign && arr[item[2]] === player.sign) {
+                        declareWinner(player.name);
+                    }
+                })
+            }
+
+            const play = (value, sign, activePlayer) => {
+                _gameArray.splice(value.dataset.id, 1, sign);
+                value.innerHTML = sign;
+
+                if (_gameArray.every(element => element !== null)) {
+                    gameBoard.endGameTie();
+                } else {
+                    gameBoard.checkWinner(_gameArray, activePlayer);
+                }
+            };
+
+            gameFields.forEach((field) =>
+                field.addEventListener('click', function (e) {
+                    if (e.target.innerHTML == '') {
+
+                        if (player1.turn == true) {
+                            activePlayer = player1;
+                            gameBoard.play(e.target, player1.sign, activePlayer);
+                            player1.turn = false;
+                            player2.turn = true;
+
+
+                        } else {
+                            activePlayer = player2;
+                            gameBoard.play(e.target, player2.sign, activePlayer);
+                            player1.turn = true;
+                            player2.turn = false;
+
+
+                        }
+
+                        turn++
+                    }
+                })
+            );
+
+
+            return { play, checkWinner, endGameTie, player1, player2 };
+        })();
+
+
+
+
+
+
+
+    </script>
+</body>
+
 </html>
